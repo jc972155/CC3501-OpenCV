@@ -81,6 +81,15 @@ int main(int argc, char *argv[])
 			double x = m.m10 / m.m00;
 			double y = m.m01 / m.m00;
 			printf("Object at: (%.1f, %.1f)", x, y);
+
+			Point centroid(static_cast<int>(x), static_cast<int>(y));
+			char coordText[50];
+			snprintf(coordText, sizeof(coordText), "(%d, %d)", centroid.x, centroid.y);
+			putText(bgr_image, coordText,
+				Point(centroid.x + 10, centroid.y - 10), 
+				FONT_HERSHEY_SIMPLEX, 0.5, 
+				Scalar(255, 255, 255),
+				 1, LINE_AA);
 		}
 
 		// Show the thresholded image
