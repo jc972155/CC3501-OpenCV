@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
 		inRange(hsv_img, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), thresh_img);
 
 		// Apply morphology to image
-		morphologyEx(thresh_img, thresh_img, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(3,3)))
-		morphologyEx(thresh_img, thresh_img, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(3,3)))
+		morphologyEx(thresh_img, thresh_img, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(3,3)));
+		morphologyEx(thresh_img, thresh_img, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(3,3)));
 
 		// Show the thresholded image
 		imshow("Thresholded", thresh_img);
