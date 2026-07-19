@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 			double y = m.m01 / m.m00;
 			printf("Object at: (%.1f, %.1f)", x, y);
 
+			// Print coords on object
 			Point centroid(static_cast<int>(x), static_cast<int>(y));
 			char coordText[50];
 			snprintf(coordText, sizeof(coordText), "(%d, %d)", centroid.x, centroid.y);
