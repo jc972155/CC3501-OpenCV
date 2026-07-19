@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 			Point centroid(static_cast<int>(x), static_cast<int>(y));
 			char coordText[50];
 			snprintf(coordText, sizeof(coordText), "(%d, %d)", centroid.x, centroid.y);
-			putText(bgr_image, coordText,
+			putText(bgr_img, coordText,
 				Point(centroid.x + 10, centroid.y - 10), 
 				FONT_HERSHEY_SIMPLEX, 0.5, 
 				Scalar(255, 255, 255),
