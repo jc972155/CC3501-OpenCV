@@ -36,6 +36,9 @@ int main(int argc, char *argv[])
 	int iLowV = 0;
 	int iHighV = 255;
 
+	int iKernel = 1;
+	if (iKernel % 2 == 0) kSize += 1;
+
 	// Create trackbars in "Control" window
 	createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
 	createTrackbar("HighH", "Control", &iHighH, 179);
@@ -45,6 +48,8 @@ int main(int argc, char *argv[])
 
 	createTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
 	createTrackbar("HighV", "Control", &iHighV, 255);
+
+	createTrackbar("Kernel", "Control", &iKernel, 10);
 
 	// Create the display windows
 	namedWindow("Control", WINDOW_AUTOSIZE);
@@ -67,8 +72,8 @@ int main(int argc, char *argv[])
 		inRange(hsv_img, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), thresh_img);
 
 		// Apply morphology to image
-		morphologyEx(thresh_img, thresh_img, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(3,3)));
-		morphologyEx(thresh_img, thresh_img, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(3,3)));
+		morphologyEx(thresh_img, thresh_img, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(iKernel,iKernel)));
+		morphologyEx(thresh_img, thresh_img, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(iKernel,iKernel)));
 
 		// Show the thresholded image
 		imshow("Thresholded", thresh_img);
