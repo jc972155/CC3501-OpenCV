@@ -9,18 +9,21 @@ Mat bgr_img, hsv_img;
 
 int main(int argc, char *argv[])
 {
-	// Load the image
-	bgr_img = imread("../img.jpg");
-	if (!bgr_img.data) {
-		bgr_img = imread("img.jpg");
-		if (!bgr_img.data) {
-			std::cerr << "Failed to load image\n";
-			return 1;
-		}
-	}
+	    // Open the video camera.
+    std::string pipeline = "libcamerasrc"
+        " ! video/x-raw, width=800, height=600" // camera needs to capture at a higher resolution
+        " ! videoconvert"
+        " ! videoscale"
+        " ! video/x-raw, width=400, height=300" // can downsample the image after capturing
+        " ! videoflip method=rotate-180" // remove this line if the image is upside-down
+        " ! appsink drop=true max_buffers=2";
 
-	// Convert to HSV colour space
-	cvtColor(bgr_img, hsv_img, COLOR_BGR2HSV);
+    cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
+
+    if(!cap.isOpened()) {
+        printf("Could not open camera.\n");
+        return 1;
+    }
 
 	// Create a control window
 	namedWindow("Control", WINDOW_AUTOSIZE);
@@ -44,14 +47,21 @@ int main(int argc, char *argv[])
 	createTrackbar("HighV", "Control", &iHighV, 255);
 
 	// Create the display windows
-	namedWindow("Display", WINDOW_AUTOSIZE);
-	imshow("Display", bgr_img); //show the original image
+	namedWindow("Control", WINDOW_AUTOSIZE);
+	imshow("Display", WINDOW_AUTOSIZE);
 	namedWindow("Thresholded", WINDOW_AUTOSIZE);
+
+	Mat bgr_img, hsv_img, thresh_img;
 
 	// Display the result of the current calibration settings
 	while (true) {
-		Mat thresh_img;
-		Mat display_img = bgr_img.clone(); // deep copy because we will modify it below
+		if (!cap.read(bgr_img)) {
+            std::cerr << "Could not read a frame.\n";
+            break;
+        }
+
+		// Convert to HSV colour space
+		cvtColor(bgr_img, hsv_img, COLOR_BGR2HSV);
 
 		// Threshold the image
 		inRange(hsv_img, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), thresh_img);
@@ -60,11 +70,12 @@ int main(int argc, char *argv[])
 		imshow("Thresholded", thresh_img);
 
 		// Draw the final image
-		imshow("Display", display_img);
+		imshow("Display", bgr_img);
 
 		// Allow openCV to process GUI events
 		waitKey(100);
 	}
 
+	cap.release();
 	return 0;
 }
