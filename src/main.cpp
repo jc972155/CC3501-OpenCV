@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	int iHighV = 255;
 
 	int iKernel = 1;
-	if (iKernel % 2 == 0) kSize += 1;
+	if (iKernel % 2 == 0) iKernel += 1; // Odd kernel size for easy centering
 
 	// Create trackbars in "Control" window
 	createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
@@ -74,6 +74,14 @@ int main(int argc, char *argv[])
 		// Apply morphology to image
 		morphologyEx(thresh_img, thresh_img, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(iKernel,iKernel)));
 		morphologyEx(thresh_img, thresh_img, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(iKernel,iKernel)));
+
+		// Object Tracking
+		Moments m = moments(thresh_img, true);
+		if (m.m00 > 0) {
+			double x = m.m10 / m.m00;
+			double y = m.m01 / m.m00;
+			printf("Object at: (%.1f, %.1f)", x, y);
+		}
 
 		// Show the thresholded image
 		imshow("Thresholded", thresh_img);
